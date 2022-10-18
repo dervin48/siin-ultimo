@@ -1,0 +1,28 @@
+.table-bordered {
+    border: 0 !important;
+}
+
+table.table-bordered.dataTable tbody td {
+    border-bottom-width: 1px !important;
+}
+
+.card-footer {
+    border-top: 1px solid #dee2e6;
+}
+
+.btn {
+    color: white !important;
+}
+
+td.details-control {
+    background: url('../lib/datatables-1.10.25/images/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+
+tr.shown td.details-control {
+    background: url('../lib/datatables-1.10.25/images/details_close.png') no-repeat center center;
+}
+
+.pointer {
+    cursor: pointer;
+}

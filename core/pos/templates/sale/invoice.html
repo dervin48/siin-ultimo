@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        * {
+            color: black;
+        }
+
+        body {
+            font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+            color: black;
+        }
+
+        .name-company {
+            font-size: 30px;
+            padding: 0;
+            margin: 0;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        table thead tr th {
+            border: 1px solid black !important;
+            padding: 3px;
+        }
+
+        table tbody tr td {
+            border: 1px solid black;
+            padding: 3px;
+        }
+
+        .img-logo {
+            margin-top: 10px;
+            width: 75px;
+            height: 75px;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <img alt="" src=" {{ sale.company.get_image }}" class="img-fluid d-block mx-auto img-logo">
+    <h1 class="name-company">{{ sale.company.name }}</h1>
+    <p class="text-center">
+        {{ sale.company.ruc }}<br>
+        {{ sale.company.address }}<br>
+        Celular: {{ sale.company.mobile }}<br>
+        Teléfono: {{ sale.company.phone }}<br>
+        Web: {{ sale.company.website }}<br>
+    </p>
+    <p>
+        <b>Número:</b> {{ sale.get_number }}<br>
+        <b>Cliente:</b> {{ sale.client.get_full_name }}<br>
+        <b>Número de cedula:</b> {{ sale.client.dni }}<br>
+        <b>Fecha de venta:</b> {{ sale.date_joined|date:'c' }}<br>
+    </p>
+    <table class="table" style="width: 100%;">
+        <thead>
+        <tr style="border: 1px solid black;">
+            <th style="width: 20%;">Cantidad</th>
+            <th style="width: 40%;">Producto</th>
+            <th style="width: 20%;">P.Unitario</th>
+            <th style="width: 20%;" class="text-right">Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for det in sale.saleproduct_set.all %}
+            <tr>
+                <td class="text-center">{{ det.cant }}</td>
+                <td>{{ det.product }}</td>
+                <td class="text-center">{{ det.price|floatformat:2 }}</td>
+                <td class="text-right">{{ det.subtotal|floatformat:2 }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3" class="text-right"><b>Subtotal</b></td>
+            <td class="text-right">{{ sale.subtotal|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td colspan="3" class="text-right"><b>Iva %</b></td>
+            <td class="text-right">{{ sale.iva|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td colspan="3" class="text-right"><b>Iva calculado</b></td>
+            <td class="text-right">{{ sale.total_iva|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td colspan="3" class="text-right"><b>Total a pagar</b></td>
+            <td class="text-right">{{ sale.total|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <p class="text-uppercase font-weight-bold text-center mt-3">
+                    Total de productos {{ sale.detsale_set.all.count }}<br>
+                    !Gracias por su preferencia!<br>
+                    Una vez que usted a recibido el pedido<br>
+                    No hay derecho a reclamo ni devolución del producto<br>
+                    Que tenga un excelente día
+                </p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

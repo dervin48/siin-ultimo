@@ -1,0 +1,31 @@
+{% extends 'report.html' %}
+{% load static %}
+{% block head_report %}
+    <script src="{% static 'sale/js/report.js' %}"></script>
+{% endblock %}
+
+{% block content_report %}
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="form-group">
+                <label>Rango de fechas:</label>
+                {{ form.date_range }}
+            </div>
+        </div>
+    </div>
+    <hr>
+    <table class="table table-bordered" id="data">
+        <thead>
+        <tr>
+            <th scope="col">Nro</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Fecha de registro</th>
+            <th scope="col">Subtotal</th>
+            <th scope="col">Iva</th>
+            <th scope="col">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+{% endblock %}

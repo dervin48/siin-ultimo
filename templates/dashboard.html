@@ -1,0 +1,157 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block head %}
+    <script src="{% static 'lib/highcharts-9.1.1/highcharts.js' %}"></script>
+    <script src="{% static 'lib/highcharts-9.1.1/modules/exporting.js' %}"></script>
+    <script src="{% static 'lib/highcharts-9.1.1/modules/export-data.js' %}"></script>
+    <script src="{% static 'lib/highcharts-9.1.1/modules/accessibility.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="container"></div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="container-pie"></div>
+            </div>
+        </div>
+        <br>
+    </div>
+    <script type="application/javascript">
+        var graphcolumn = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Reporte de ventas del año 2021'
+            },
+            subtitle: {
+                text: 'Reporte de columnas'
+            },
+            xAxis: {
+                categories: [
+                    'Enero',
+                    'Febrero',
+                    'Marzo',
+                    'Abril',
+                    'Mayo',
+                    'Junio',
+                    'Julio',
+                    'Agosto',
+                    'Septiembre',
+                    'Octubre',
+                    'Noviembre',
+                    'Diciembre'
+                ],
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Valores $'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} $</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+        });
+        var graphpie = Highcharts.chart('container-pie', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Porcentaje de venta de productos por el mes de Junio del año 2020'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+        });
+        var graph = {
+            getSalesYearMonth: function () {
+                $.ajax({
+                    url: pathname,
+                    data: {
+                        'action': 'get_graph_sales_year_month'
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    success: function (request) {
+                        if (!request.hasOwnProperty('error')) {
+                            graphcolumn.addSeries(request);
+                            return false;
+                        }
+                        message_error(request.error);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        message_error(errorThrown + ' ' + textStatus);
+                    }
+                });
+            },
+            getSalesProductsYearMonth: function () {
+                $.ajax({
+                    url: pathname,
+                    data: {
+                        'action': 'get_graph_sales_products_year_month'
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    success: function (request) {
+                        if (!request.hasOwnProperty('error')) {
+                            graphpie.addSeries(request);
+                            return false;
+                        }
+                        message_error(request.error);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        message_error(errorThrown + ' ' + textStatus);
+                    }
+                });
+            }
+        };
+
+        $(function () {
+            graph.getSalesYearMonth();
+            graph.getSalesProductsYearMonth();
+        });
+    </script>
+{% endblock %}
