@@ -97,8 +97,9 @@ var sale = {
 
                 $(row).find('input[name="cant"]').TouchSpin({
                     min: 1,
-                    max: data.is_inventoried ? row.stock : 1000000,
+                    max: data.is_inventoried ? row.stock,
                     step: 1
+
                 });
 
             },

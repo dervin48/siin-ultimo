@@ -36,13 +36,13 @@
                             <div class="card">
                                 <div class="card-header">
                                     <h3 class="card-title">
-                                        <b><i class="fas fa-boxes"></i> Detalle de productos</b>
+                                        <b><i class="fas fa-boxes"></i> Detalle de insumo</b>
                                     </h3>
                                 </div>
                                 <div class="card-body">
                                     <div class="container-fluid">
                                         <div class="form-group">
-                                            <label>Buscador de productos:</label>
+                                            <label>Buscador de insumos:</label>
                                             <div class="input-group">
                                                 <select class="form-control select2" name="search_product"></select>
                                                 {#                                        <input type="text" class="form-control" autocomplete="off"#}
@@ -54,7 +54,7 @@
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-right">
                                                         <a class="dropdown-item btnSearchProducts">
-                                                            <i class="fas fa-search"></i> Buscar productos
+                                                            <i class="fas fa-search"></i> Buscar insumos
                                                         </a>
                                                         <a class="dropdown-item btnClearSearch">
                                                             <i class="fas fa-times"></i> Limpiar búsqueda
@@ -71,7 +71,7 @@
                                             <thead>
                                             <tr>
                                                 <th>Eliminar</th>
-                                                <th>Producto</th>
+                                                <th>Insumo</th>
                                                 <th>Stock</th>
                                                 <th>Precio Unitario</th>
                                                 <th>Cantidad</th>
@@ -88,17 +88,17 @@
                         <div class="col-lg-4">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title"><b><i class="fas fa-shopping-cart"></i> Datos de la factura</b></h3>
+                                    <h3 class="card-title"><b><i class="fas fa-shopping-cart"></i> Datos de la requisicion</b></h3>
                                 </div>
                                 <div class="card-body">
                                     <div class="container-fluid">
                                         <input type="hidden" name="action" value="{{ action }}">
                                         <div class="form-group">
-                                            <label>Fecha de venta:</label>
+                                            <label>Fecha de solicitud:</label>
                                             {{ form.date_joined }}
                                         </div>
                                         <div class="form-group">
-                                            <label>Cliente:</label>
+                                            <label>Solicitante:</label>
                                             <div class="input-group">
                                                 {{ form.client }}
                                                 <div class="input-group-append">
@@ -149,7 +149,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">
-                            <b><i class="fas fa-user-plus"></i> Nuevo registro de un cliente</b>
+                            <b><i class="fas fa-user-plus"></i> Nuevo registro de un solicitante</b>
                         </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -165,7 +165,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary btn-block btn-flat">
-                            <i class="fas fa-save"></i> Guardar Cliente
+                            <i class="fas fa-save"></i> Guardar Solicitante
                         </button>
                     </div>
                 </div>
@@ -178,7 +178,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">
-                        <b><i class="fas fa-search"></i> Búsqueda de Productos</b>
+                        <b><i class="fas fa-search"></i> Búsqueda de Insumos</b>
                     </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -188,7 +188,7 @@
                     <table class="table table-bordered table-sm" id="tblSearchProducts">
                         <thead>
                         <tr>
-                            <th>Producto</th>
+                            <th>Insumo</th>
                             <th>Imagen</th>
                             <th>Stock</th>
                             <th>Precio Unitario</th>

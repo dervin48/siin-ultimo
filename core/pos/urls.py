@@ -5,6 +5,7 @@ from core.pos.views.company.views import CompanyUpdateView
 from core.pos.views.dashboard.views import *
 from core.pos.views.product.views import *
 from core.pos.views.sale.views import *
+from core.pos.views.into.views import *
 
 urlpatterns = [
     # dashboard
@@ -30,6 +31,12 @@ urlpatterns = [
     path('sale/delete/<int:pk>/', SaleDeleteView.as_view(), name='sale_delete'),
     path('sale/update/<int:pk>/', SaleUpdateView.as_view(), name='sale_update'),
     path('sale/invoice/pdf/<int:pk>/', SaleInvoicePdfView.as_view(), name='sale_invoice_pdf'),
+    # sale
+    path('into/', IntoListView.as_view(), name='into_list'),
+    path('into/add/', IntoCreateView.as_view(), name='into_create'),
+    path('into/delete/<int:pk>/', IntoDeleteView.as_view(), name='into_delete'),
+    path('into/update/<int:pk>/', IntoUpdateView.as_view(), name='into_update'),
+    path('into/invoice/pdf/<int:pk>/', IntoInvoicePdfView.as_view(), name='into_invoice_pdf'),
     # company
     path('company/update/', CompanyUpdateView.as_view(), name='company_update'),
 ]

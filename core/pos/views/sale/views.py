@@ -71,7 +71,7 @@ class SaleCreateView(ExistsCompanyMixin, ValidatePermissionRequiredMixin, Create
                 data = []
                 ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term'].strip()
-                products = Product.objects.filter(Q(stock__gt=0) | Q(is_inventoried=False))
+                products = Product.objects.filter(Q(stock__gt=0) | Q(is_inventoried=True))
                 if len(term):
                     products = products.filter(name__icontains=term)
                 for i in products.exclude(id__in=ids_exclude)[0:10]:

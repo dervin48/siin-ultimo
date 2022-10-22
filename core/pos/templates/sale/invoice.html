@@ -58,15 +58,15 @@
     </p>
     <p>
         <b>Número:</b> {{ sale.get_number }}<br>
-        <b>Cliente:</b> {{ sale.client.get_full_name }}<br>
-        <b>Número de cedula:</b> {{ sale.client.dni }}<br>
-        <b>Fecha de venta:</b> {{ sale.date_joined|date:'c' }}<br>
+        <b>Solicitante:</b> {{ sale.client.get_full_name }}<br>
+        <b>Número de DPI:</b> {{ sale.client.dni }}<br>
+        <b>Fecha de Solicitante:</b> {{ sale.date_joined|date:'c' }}<br>
     </p>
     <table class="table" style="width: 100%;">
         <thead>
         <tr style="border: 1px solid black;">
             <th style="width: 20%;">Cantidad</th>
-            <th style="width: 40%;">Producto</th>
+            <th style="width: 40%;">Insumo</th>
             <th style="width: 20%;">P.Unitario</th>
             <th style="width: 20%;" class="text-right">Subtotal</th>
         </tr>
@@ -99,16 +99,40 @@
         <tr>
             <td colspan="4">
                 <p class="text-uppercase font-weight-bold text-center mt-3">
-                    Total de productos {{ sale.detsale_set.all.count }}<br>
-                    !Gracias por su preferencia!<br>
-                    Una vez que usted a recibido el pedido<br>
-                    No hay derecho a reclamo ni devolución del producto<br>
-                    Que tenga un excelente día
-                </p>
+<!--                    Total de productos {{ sale.detsale_set.all.count }}<br>-->
+<!--                    !Gracias por su preferencia!<br>-->
+<!--                    Una vez que usted a recibido el pedido<br>-->
+<!--                    No hay derecho a reclamo ni devolución del producto<br>-->
+<!--                    Que tenga un excelente día-->
+<!--                </p>-->
+
+
+
             </td>
         </tr>
+
+
+
         </tbody>
     </table>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <p>f._____________________________</p>
+    <b>Solicitante:</b> {{ sale.client.get_full_name }}<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <p>f._____________________________</p>
+    <p>Antony Alberth Villanueva Ruano</p>
+            <p>Encargado de Bodega</p>
 </div>
 </body>
 </html>

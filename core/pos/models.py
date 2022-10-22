@@ -30,9 +30,9 @@ class Product(models.Model):
     name = models.CharField(max_length=150, verbose_name='Nombre', unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría')
     image = models.ImageField(upload_to='product/%Y/%m/%d', null=True, blank=True, verbose_name='Imagen')
-    is_inventoried = models.BooleanField(default=True, verbose_name='¿Es inventariado?')
+    is_inventoried = models.BooleanField(default=True, verbose_name='¿Es invetario inicial?')
     stock = models.IntegerField(default=0, verbose_name='Stock')
-    pvp = models.DecimalField(default=0.00, max_digits=9, decimal_places=2, verbose_name='Precio de venta')
+    pvp = models.DecimalField(default=0.00, max_digits=9, decimal_places=2, verbose_name='Precio de insumo')
 
     def __str__(self):
         return f'{self.name} ({self.category.name})'
@@ -54,40 +54,12 @@ class Product(models.Model):
         verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
         ordering = ['id']
-
-
-class Client(models.Model):
-    names = models.CharField(max_length=150, verbose_name='Nombres')
-    dni = models.CharField(max_length=10, unique=True, verbose_name='Número de cedula')
-    birthdate = models.DateField(default=datetime.now, verbose_name='Fecha de nacimiento')
-    address = models.CharField(max_length=150, null=True, blank=True, verbose_name='Dirección')
-    gender = models.CharField(max_length=10, choices=genders, default='male', verbose_name='Genero')
-
-    def __str__(self):
-        return self.get_full_name()
-
-    def get_full_name(self):
-        return f'{self.names} ({self.dni})'
-
-    def toJSON(self):
-        item = model_to_dict(self)
-        item['gender'] = {'id': self.gender, 'name': self.get_gender_display()}
-        item['birthdate'] = self.birthdate.strftime('%Y-%m-%d')
-        item['full_name'] = self.get_full_name()
-        return item
-
-    class Meta:
-        verbose_name = 'Cliente'
-        verbose_name_plural = 'Clientes'
-        ordering = ['id']
-
-
 class Company(models.Model):
-    name = models.CharField(max_length=150, verbose_name='Razón Social')
-    ruc = models.CharField(max_length=13, verbose_name='Ruc')
+    name = models.CharField(max_length=150, verbose_name='Centro de Salud')
+    ruc = models.CharField(max_length=13, verbose_name='NIT')
     address = models.CharField(max_length=150, null=True, blank=True, verbose_name='Dirección')
-    mobile = models.CharField(max_length=10, verbose_name='Teléfono Celular')
-    phone = models.CharField(max_length=7, verbose_name='Teléfono Convencional')
+    mobile = models.CharField(max_length=8, verbose_name='Teléfono Institucional')
+    phone = models.CharField(max_length=8, verbose_name='Teléfono Fax')
     website = models.CharField(max_length=150, verbose_name='Website')
     image = models.ImageField(upload_to='company/%Y/%m/%d', null=True, blank=True, verbose_name='Imagen')
 
@@ -112,7 +84,106 @@ class Company(models.Model):
             ('change_company', 'Can change Company'),
         )
         ordering = ['id']
+class Client(models.Model):
+    names = models.CharField(max_length=150, verbose_name='Nombres')
+    dni = models.CharField(max_length=13, unique=True, verbose_name='Número de DPI')
+    birthdate = models.DateField(default=datetime.now, verbose_name='Fecha de nacimiento')
+    address = models.CharField(max_length=150, null=True, blank=True, verbose_name='Dirección')
+    gender = models.CharField(max_length=10, choices=genders, default='male', verbose_name='Genero')
 
+    def __str__(self):
+        return self.get_full_name()
+
+    def get_full_name(self):
+        return f'{self.names} ({self.dni})'
+
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['gender'] = {'id': self.gender, 'name': self.get_gender_display()}
+        item['birthdate'] = self.birthdate.strftime('%Y-%m-%d')
+        item['full_name'] = self.get_full_name()
+        return item
+
+    class Meta:
+        verbose_name = 'Cliente'
+        verbose_name_plural = 'Clientes'
+        ordering = ['id']
+
+
+class Into(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    date_joined = models.DateField(default=datetime.now)
+    subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    iva = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    total_iva = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+
+    def __str__(self):
+        return self.client.names
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        if Company.objects.all().exists():
+            self.company = Company.objects.first()
+        super(Into, self).save()
+
+    def get_number(self):
+        return f'{self.id:06d}'
+
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['number'] = self.get_number()
+        item['client'] = self.client.toJSON()
+        item['subtotal'] = f'{self.subtotal:.2f}'
+        item['iva'] = f'{self.iva:.2f}'
+        item['total_iva'] = f'{self.total_iva:.2f}'
+        item['total'] = f'{self.total:.2f}'
+        item['date_joined'] = self.date_joined.strftime('%Y-%m-%d')
+        item['intoproduct'] = [i.toJSON() for i in self.intoproduct_set.all()]
+        return item
+
+    def delete(self, using=None, keep_parents=False):
+        for detail in self.intoproduct_set.filter(product__is_inventoried=True):
+            detail.product.stock += detail.cant
+            detail.product.save()
+        super(Sale, self).delete()
+
+    def calculate_invoice(self):
+        subtotal = self.intoproduct_set.all().aggregate(result=Coalesce(Sum(F('price') * F('cant')), 0.00, output_field=FloatField())).get('result')
+        self.subtotal = subtotal
+        self.total_iva = self.subtotal * float(self.iva)
+        self.total = float(self.subtotal) + float(self.total_iva)
+        self.save()
+
+    class Meta:
+        verbose_name = 'Entrada'
+        verbose_name_plural = 'Entradas'
+        ordering = ['id']
+
+
+class IntoProduct(models.Model):
+    into = models.ForeignKey(Into, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    price = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    cant = models.IntegerField(default=0)
+    subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+
+    def __str__(self):
+        return self.product.name
+
+    def toJSON(self):
+        item = model_to_dict(self, exclude=['into'])
+        item['product'] = self.product.toJSON()
+        item['price'] = f'{self.price:.2f}'
+        item['subtotal'] = f'{self.subtotal:.2f}'
+        return item
+
+    class Meta:
+        verbose_name = 'Detalle de Entrada'
+        verbose_name_plural = 'Detalle de Entrada'
+        default_permissions = ()
+        ordering = ['id']
 
 class Sale(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)

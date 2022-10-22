@@ -71,7 +71,7 @@ class ClientForm(ModelForm):
         fields = '__all__'
         widgets = {
             'names': forms.TextInput(attrs={'placeholder': 'Ingrese un nombre'}),
-            'dni': forms.TextInput(attrs={'placeholder': 'Ingrese un número de cedula'}),
+            'dni': forms.TextInput(attrs={'placeholder': 'Ingrese un número de DPI'}),
             'birthdate': forms.DateInput(format='%Y-%m-%d', attrs={
                 'class': 'form-control datetimepicker-input',
                 'id': 'birthdate',
@@ -137,6 +137,36 @@ class SaleForm(ModelForm):
             })
         }
 
+class IntoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['client'].queryset = Client.objects.none()
+class IntoForm(ModelForm):
+    class Meta:
+        model = Into
+        fields = '__all__'
+        widgets = {
+            'date_joined': forms.DateInput(format='%Y-%m-%d', attrs={
+                'value': datetime.now().strftime('%Y-%m-%d'),
+                'autocomplete': 'off',
+                'class': 'form-control datetimepicker-input',
+                'id': 'date_joined',
+                'data-target': '#date_joined',
+                'data-toggle': 'datetimepicker'
+            }
+                                           ),
+            'iva': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'subtotal': forms.TextInput(attrs={
+                'readonly': True,
+                'class': 'form-control',
+            }),
+            'total': forms.TextInput(attrs={
+                'readonly': True,
+                'class': 'form-control',
+            })
+        }
 
 class CompanyForm(ModelForm):
     def __init__(self, *args, **kwargs):
